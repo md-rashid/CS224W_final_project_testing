@@ -4,8 +4,8 @@ import torch
 from torch import nn
 from torch_geometric.data import Data
 
-from CS224W_final_project.functional import shortest_path_distance, batched_shortest_path_distance
-from CS224W_final_project.layers import GraphormerEncoderLayer, CentralityEncoding, SpatialEncoding
+from CS224W_final_project_testing.functional import shortest_path_distance, batched_shortest_path_distance
+from CS224W_final_project_testing.layers import GraphormerEncoderLayer, CentralityEncoding, SpatialEncoding
 
 
 class Graphormer(nn.Module):
