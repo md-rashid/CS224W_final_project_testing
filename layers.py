@@ -93,7 +93,8 @@ class EdgeEncoding(nn.Module):
         :param edge_paths: pairwise node paths in edge indexes
         :return: torch.Tensor, Edge Encoding matrix
         """
-        print("Start - current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
+        current_datetime = datetime.now()
+        print(current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
         
         # Preallocate output tensor
         device = next(self.parameters()).device
@@ -120,7 +121,8 @@ class EdgeEncoding(nn.Module):
                 path_encoding = (path_weights * path_edge_features).sum(dim=1) #.mean()
                 cij[src][dst] = path_encoding
 
-        print("End - current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
+        current_datetime = datetime.now()
+        print(current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
         return torch.nan_to_num(cij)
 
 class GraphormerAttentionHead(nn.Module):
