@@ -1,5 +1,5 @@
 from typing import Tuple
-
+from datetime import datetime
 import torch
 from torch import nn
 from torch_geometric.utils import degree
@@ -93,7 +93,7 @@ class EdgeEncoding(nn.Module):
         :param edge_paths: pairwise node paths in edge indexes
         :return: torch.Tensor, Edge Encoding matrix
         """
-        print("Start - Current Date and Time:", current_time)
+        print("Start - current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
         
         # Preallocate output tensor
         device = next(self.parameters()).device
@@ -120,7 +120,7 @@ class EdgeEncoding(nn.Module):
                 path_encoding = (path_weights * path_edge_features).sum(dim=1) #.mean()
                 cij[src][dst] = path_encoding
 
-        print("End - Current Date and Time:", current_time)
+        print("End - current_datetime.strftime("%Y-%m-%d %H:%M:%S"))
         return torch.nan_to_num(cij)
 
 class GraphormerAttentionHead(nn.Module):
