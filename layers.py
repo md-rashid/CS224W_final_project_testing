@@ -93,16 +93,32 @@ class EdgeEncoding(nn.Module):
         :param edge_paths: pairwise node paths in edge indexes
         :return: torch.Tensor, Edge Encoding matrix
         """
+        
+        # Preallocate output tensor
         cij = torch.zeros((x.shape[0], x.shape[0])).to(next(self.parameters()).device)
-        weights_inds = torch.arange(0, self.max_path_distance)
-        # TODO: make this more efficient
-        for src in edge_paths:
-            for dst in edge_paths[src]:
-                path_ij = edge_paths[src][dst][:self.max_path_distance]
-                cij[src][dst] = (self.edge_weights[weights_inds[:len(path_ij)]] * edge_attr[path_ij]).sum(dim=1).mean()
+        
+#        weights_inds = torch.arange(0, self.max_path_distance)
+#        # TODO: make this more efficient
+#        for src in edge_paths:
+#            for dst in edge_paths[src]:
+#                path_ij = edge_paths[src][dst][:self.max_path_distance]
+#                cij[src][dst] = (self.edge_weights[weights_inds[:len(path_ij)]] * edge_attr[path_ij]).sum(dim=1).mean()
 
-        cij = torch.nan_to_num(cij)
-        return cij
+        # Vectorize path processing
+        for src, destinations in edge_paths.items():
+            for dst, path in destinations.items():
+                # Limit path length
+                path = path[:self.max_path_distance]
+            
+                # Use tensor operations instead of explicit loops
+                path_weights = self.edge_weights[:len(path)]
+                path_edge_features = edge_attr[path]
+            
+                # Compute path encoding
+                path_encoding = (path_weights * path_edge_features).sum(dim=1).mean()
+                cij[src][dst] = path_encoding
+            
+        return torch.nan_to_num(cij)
 
 class GraphormerAttentionHead(nn.Module):
     def __init__(self, dim_in: int, dim_q: int, dim_k: int, edge_dim: int, max_path_distance: int):
