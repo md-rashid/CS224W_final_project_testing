@@ -95,7 +95,8 @@ class EdgeEncoding(nn.Module):
         """
         
         # Preallocate output tensor
-        cij = torch.zeros((x.shape[0], x.shape[0])).to(next(self.parameters()).device)
+        device = next(self.parameters()).device
+        cij = torch.zeros((x.shape[0], x.shape[0]),device=device)
         
 #        weights_inds = torch.arange(0, self.max_path_distance)
 #        # TODO: make this more efficient
@@ -114,8 +115,8 @@ class EdgeEncoding(nn.Module):
                 path_weights = self.edge_weights[:len(path)]
                 path_edge_features = edge_attr[path]
             
-                # Compute path encoding
-                path_encoding = (path_weights * path_edge_features).sum(dim=1).mean()
+                # Compute path encoding, commenting out mean() for slight performance gain
+                path_encoding = (path_weights * path_edge_features).sum(dim=1) #.mean()
                 cij[src][dst] = path_encoding
             
         return torch.nan_to_num(cij)
